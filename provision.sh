@@ -25,7 +25,7 @@ WORKFLOWS=(
 )
 
 CHECKPOINT_MODELS=(
-    "https://civitai.com/api/download/models/798204?type=Model&format=SafeTensor&size=full&fp=fp16"
+    " "
 )
 
 UNET_MODELS=(
@@ -42,84 +42,6 @@ ESRGAN_MODELS=(
 
 CONTROLNET_MODELS=(
 )
-
-### QWEN IMAGE EDIT — FULL DIFFUSERS MODEL ###
-
-QWEN_IMAGE_EDIT_BASE="https://huggingface.co/Runware/Qwen-Image-Edit/resolve/main"
-QWEN_DIR="${COMFYUI_DIR}/models/qwen_image_edit"
-
-function provisioning_qwen_image_edit() {
-    echo "Setting up Qwen-Image-Edit model..."
-
-    # Create directory structure
-    mkdir -p "${QWEN_DIR}/unet"
-    mkdir -p "${QWEN_DIR}/vae"
-    mkdir -p "${QWEN_DIR}/text_encoder"
-    mkdir -p "${QWEN_DIR}/tokenizer"
-    mkdir -p "${QWEN_DIR}/scheduler"
-    mkdir -p "${QWEN_DIR}/feature_extractor"
-
-    # Model index
-    provisioning_download \
-        "${QWEN_IMAGE_EDIT_BASE}/model_index.json" \
-        "${QWEN_DIR}"
-
-    ######## UNET ########
-    provisioning_download \
-        "${QWEN_IMAGE_EDIT_BASE}/unet/config.json" \
-        "${QWEN_DIR}/unet"
-
-    provisioning_download \
-        "${QWEN_IMAGE_EDIT_BASE}/unet/diffusion_pytorch_model.safetensors" \
-        "${QWEN_DIR}/unet"
-
-    ######## VAE ########
-    provisioning_download \
-        "${QWEN_IMAGE_EDIT_BASE}/vae/config.json" \
-        "${QWEN_DIR}/vae"
-
-    provisioning_download \
-        "${QWEN_IMAGE_EDIT_BASE}/vae/diffusion_pytorch_model.safetensors" \
-        "${QWEN_DIR}/vae"
-
-    ######## TEXT ENCODER ########
-    provisioning_download \
-        "${QWEN_IMAGE_EDIT_BASE}/text_encoder/config.json" \
-        "${QWEN_DIR}/text_encoder"
-
-    provisioning_download \
-        "${QWEN_IMAGE_EDIT_BASE}/text_encoder/model.safetensors" \
-        "${QWEN_DIR}/text_encoder"
-
-    ######## TOKENIZER ########
-    provisioning_download \
-        "${QWEN_IMAGE_EDIT_BASE}/tokenizer/tokenizer.json" \
-        "${QWEN_DIR}/tokenizer"
-
-    provisioning_download \
-        "${QWEN_IMAGE_EDIT_BASE}/tokenizer/tokenizer_config.json" \
-        "${QWEN_DIR}/tokenizer"
-
-    provisioning_download \
-        "${QWEN_IMAGE_EDIT_BASE}/tokenizer/vocab.json" \
-        "${QWEN_DIR}/tokenizer"
-
-    provisioning_download \
-        "${QWEN_IMAGE_EDIT_BASE}/tokenizer/merges.txt" \
-        "${QWEN_DIR}/tokenizer"
-
-    ######## SCHEDULER ########
-    provisioning_download \
-        "${QWEN_IMAGE_EDIT_BASE}/scheduler/scheduler_config.json" \
-        "${QWEN_DIR}/scheduler"
-
-    ######## FEATURE EXTRACTOR ########
-    provisioning_download \
-        "${QWEN_IMAGE_EDIT_BASE}/feature_extractor/preprocessor_config.json" \
-        "${QWEN_DIR}/feature_extractor"
-
-    echo "Qwen-Image-Edit provisioning complete."
-}
 
 ### DO NOT EDIT BELOW HERE UNLESS YOU KNOW WHAT YOU ARE DOING ###
 
@@ -146,10 +68,6 @@ function provisioning_start() {
     provisioning_get_files \
         "${COMFYUI_DIR}/models/esrgan" \
         "${ESRGAN_MODELS[@]}"
-
-    # Qwen-Image-Edit model setup
-    provisioning_qwen_image_edit
-
     provisioning_print_end
 }
 
