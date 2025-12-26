@@ -29,18 +29,23 @@ CHECKPOINT_MODELS=(
 )
 
 UNET_MODELS=(
+    " "
 )
 
 LORA_MODELS=(
+    " "
 )
 
 VAE_MODELS=(
+    " "
 )
 
 ESRGAN_MODELS=(
+    " "
 )
 
 CONTROLNET_MODELS=(
+    " "
 )
 
 ### DO NOT EDIT BELOW HERE UNLESS YOU KNOW WHAT YOU ARE DOING ###
