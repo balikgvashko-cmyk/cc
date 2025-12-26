@@ -3,50 +3,113 @@
 source /venv/main/bin/activate
 COMFYUI_DIR=${WORKSPACE}/ComfyUI
 
-# Packages are installed after nodes so we can fix them...
-
 APT_PACKAGES=(
-    #"package-1"
-    #"package-2"
 )
 
 PIP_PACKAGES=(
-    #"package-1"
-    #"package-2"
 )
 
 NODES=(
-    #"https://github.com/ltdrdata/ComfyUI-Manager"
-    #"https://github.com/cubiq/ComfyUI_essentials"
 )
 
 WORKFLOWS=(
-
 )
 
 CHECKPOINT_MODELS=(
-    " "
 )
 
 UNET_MODELS=(
-    " "
 )
 
 LORA_MODELS=(
-    " "
 )
 
 VAE_MODELS=(
-    " "
 )
 
 ESRGAN_MODELS=(
-    " "
 )
 
 CONTROLNET_MODELS=(
-    " "
 )
+
+###############################################
+### QWEN IMAGE EDIT 2511 — FULL DIFFUSERS MODEL
+###############################################
+
+QWEN2511_DIR="${COMFYUI_DIR}/models/qwen_image_edit_2511"
+
+function provisioning_qwen_image_edit_2511() {
+    echo "Setting up Qwen-Image-Edit-2511 model..."
+
+    mkdir -p "${QWEN2511_DIR}/unet"
+    mkdir -p "${QWEN2511_DIR}/vae"
+    mkdir -p "${QWEN2511_DIR}/text_encoder"
+    mkdir -p "${QWEN2511_DIR}/tokenizer"
+    mkdir -p "${QWEN2511_DIR}/scheduler"
+    mkdir -p "${QWEN2511_DIR}/feature_extractor"
+
+    # model_index.json
+    provisioning_download \
+        "https://huggingface.co/Qwen/Qwen-Image-Edit-2511/resolve/main/model_index.json" \
+        "${QWEN2511_DIR}"
+
+    ######## UNET ########
+    provisioning_download \
+        "https://huggingface.co/Qwen/Qwen-Image-Edit-2511/resolve/main/unet/config.json" \
+        "${QWEN2511_DIR}/unet"
+
+    provisioning_download \
+        "https://huggingface.co/Qwen/Qwen-Image-Edit-2511/resolve/main/unet/diffusion_pytorch_model.safetensors" \
+        "${QWEN2511_DIR}/unet"
+
+    ######## VAE ########
+    provisioning_download \
+        "https://huggingface.co/Qwen/Qwen-Image-Edit-2511/resolve/main/vae/config.json" \
+        "${QWEN2511_DIR}/vae"
+
+    provisioning_download \
+        "https://huggingface.co/Qwen/Qwen-Image-Edit-2511/resolve/main/vae/diffusion_pytorch_model.safetensors" \
+        "${QWEN2511_DIR}/vae"
+
+    ######## TEXT ENCODER ########
+    provisioning_download \
+        "https://huggingface.co/Qwen/Qwen-Image-Edit-2511/resolve/main/text_encoder/config.json" \
+        "${QWEN2511_DIR}/text_encoder"
+
+    provisioning_download \
+        "https://huggingface.co/Qwen/Qwen-Image-Edit-2511/resolve/main/text_encoder/model.safetensors" \
+        "${QWEN2511_DIR}/text_encoder"
+
+    ######## TOKENIZER ########
+    provisioning_download \
+        "https://huggingface.co/Qwen/Qwen-Image-Edit-2511/resolve/main/tokenizer/tokenizer.json" \
+        "${QWEN2511_DIR}/tokenizer"
+
+    provisioning_download \
+        "https://huggingface.co/Qwen/Qwen-Image-Edit-2511/resolve/main/tokenizer/tokenizer_config.json" \
+        "${QWEN2511_DIR}/tokenizer"
+
+    provisioning_download \
+        "https://huggingface.co/Qwen/Qwen-Image-Edit-2511/resolve/main/tokenizer/vocab.json" \
+        "${QWEN2511_DIR}/tokenizer"
+
+    provisioning_download \
+        "https://huggingface.co/Qwen/Qwen-Image-Edit-2511/resolve/main/tokenizer/merges.txt" \
+        "${QWEN2511_DIR}/tokenizer"
+
+    ######## SCHEDULER ########
+    provisioning_download \
+        "https://huggingface.co/Qwen/Qwen-Image-Edit-2511/resolve/main/scheduler/scheduler_config.json" \
+        "${QWEN2511_DIR}/scheduler"
+
+    ######## FEATURE EXTRACTOR ########
+    provisioning_download \
+        "https://huggingface.co/Qwen/Qwen-Image-Edit-2511/resolve/main/feature_extractor/preprocessor_config.json" \
+        "${QWEN2511_DIR}/feature_extractor"
+
+    echo "Qwen-Image-Edit-2511 provisioning complete."
+}
 
 ### DO NOT EDIT BELOW HERE UNLESS YOU KNOW WHAT YOU ARE DOING ###
 
@@ -55,24 +118,17 @@ function provisioning_start() {
     provisioning_get_apt_packages
     provisioning_get_nodes
     provisioning_get_pip_packages
-    provisioning_get_files \
-        "${COMFYUI_DIR}/models/checkpoints" \
-        "${CHECKPOINT_MODELS[@]}"
-    provisioning_get_files \
-        "${COMFYUI_DIR}/models/unet" \
-        "${UNET_MODELS[@]}"
-    provisioning_get_files \
-        "${COMFYUI_DIR}/models/lora" \
-        "${LORA_MODELS[@]}"
-    provisioning_get_files \
-        "${COMFYUI_DIR}/models/controlnet" \
-        "${CONTROLNET_MODELS[@]}"
-    provisioning_get_files \
-        "${COMFYUI_DIR}/models/vae" \
-        "${VAE_MODELS[@]}"
-    provisioning_get_files \
-        "${COMFYUI_DIR}/models/esrgan" \
-        "${ESRGAN_MODELS[@]}"
+
+    provisioning_get_files "${COMFYUI_DIR}/models/checkpoints" "${CHECKPOINT_MODELS[@]}"
+    provisioning_get_files "${COMFYUI_DIR}/models/unet" "${UNET_MODELS[@]}"
+    provisioning_get_files "${COMFYUI_DIR}/models/lora" "${LORA_MODELS[@]}"
+    provisioning_get_files "${COMFYUI_DIR}/models/controlnet" "${CONTROLNET_MODELS[@]}"
+    provisioning_get_files "${COMFYUI_DIR}/models/vae" "${VAE_MODELS[@]}"
+    provisioning_get_files "${COMFYUI_DIR}/models/esrgan" "${ESRGAN_MODELS[@]}"
+
+    # Qwen Image Edit 2511
+    provisioning_qwen_image_edit_2511
+
     provisioning_print_end
 }
 
@@ -142,7 +198,6 @@ function provisioning_has_valid_hf_token() {
         -H "Authorization: Bearer $HF_TOKEN" \
         -H "Content-Type: application/json")
 
-    # Check if the token is valid
     if [ "$response" -eq 200 ]; then
         return 0
     else
@@ -158,7 +213,6 @@ function provisioning_has_valid_civitai_token() {
         -H "Authorization: Bearer $CIVITAI_TOKEN" \
         -H "Content-Type: application/json")
 
-    # Check if the token is valid
     if [ "$response" -eq 200 ]; then
         return 0
     else
@@ -166,12 +220,10 @@ function provisioning_has_valid_civitai_token() {
     fi
 }
 
-# Download from $1 URL to $2 file path
 function provisioning_download() {
     if [[ -n $HF_TOKEN && $1 =~ ^https://([a-zA-Z0-9_-]+\.)?huggingface\.co(/|$|\?) ]]; then
         auth_token="$HF_TOKEN"
-    elif 
-        [[ -n $CIVITAI_TOKEN && $1 =~ ^https://([a-zA-Z0-9_-]+\.)?civitai\.com(/|$|\?) ]]; then
+    elif [[ -n $CIVITAI_TOKEN && $1 =~ ^https://([a-zA-Z0-9_-]+\.)?civitai\.com(/|$|\?) ]]; then
         auth_token="$CIVITAI_TOKEN"
     fi
     if [[ -n $auth_token ]];then
@@ -181,7 +233,6 @@ function provisioning_download() {
     fi
 }
 
-# Allow user to disable provisioning if they started with a script they didn't want
 if [[ ! -f /.noprovisioning ]]; then
     provisioning_start
 fi
