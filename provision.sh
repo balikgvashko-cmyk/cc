@@ -16,6 +16,7 @@ WORKFLOWS=(
 )
 
 CHECKPOINT_MODELS=(
+
 )
 
 UNET_MODELS=(
@@ -33,84 +34,6 @@ ESRGAN_MODELS=(
 CONTROLNET_MODELS=(
 )
 
-###############################################
-### QWEN IMAGE EDIT 2511 — FULL DIFFUSERS MODEL
-###############################################
-
-QWEN2511_DIR="${COMFYUI_DIR}/models/qwen_image_edit_2511"
-
-function provisioning_qwen_image_edit_2511() {
-    echo "Setting up Qwen-Image-Edit-2511 model..."
-
-    mkdir -p "${QWEN2511_DIR}/unet"
-    mkdir -p "${QWEN2511_DIR}/vae"
-    mkdir -p "${QWEN2511_DIR}/text_encoder"
-    mkdir -p "${QWEN2511_DIR}/tokenizer"
-    mkdir -p "${QWEN2511_DIR}/scheduler"
-    mkdir -p "${QWEN2511_DIR}/feature_extractor"
-
-    # model_index.json
-    provisioning_download \
-        "https://huggingface.co/Qwen/Qwen-Image-Edit-2511/resolve/main/model_index.json" \
-        "${QWEN2511_DIR}"
-
-    ######## UNET ########
-    provisioning_download \
-        "https://huggingface.co/Qwen/Qwen-Image-Edit-2511/resolve/main/unet/config.json" \
-        "${QWEN2511_DIR}/unet"
-
-    provisioning_download \
-        "https://huggingface.co/Qwen/Qwen-Image-Edit-2511/resolve/main/unet/diffusion_pytorch_model.safetensors" \
-        "${QWEN2511_DIR}/unet"
-
-    ######## VAE ########
-    provisioning_download \
-        "https://huggingface.co/Qwen/Qwen-Image-Edit-2511/resolve/main/vae/config.json" \
-        "${QWEN2511_DIR}/vae"
-
-    provisioning_download \
-        "https://huggingface.co/Qwen/Qwen-Image-Edit-2511/resolve/main/vae/diffusion_pytorch_model.safetensors" \
-        "${QWEN2511_DIR}/vae"
-
-    ######## TEXT ENCODER ########
-    provisioning_download \
-        "https://huggingface.co/Qwen/Qwen-Image-Edit-2511/resolve/main/text_encoder/config.json" \
-        "${QWEN2511_DIR}/text_encoder"
-
-    provisioning_download \
-        "https://huggingface.co/Qwen/Qwen-Image-Edit-2511/resolve/main/text_encoder/model.safetensors" \
-        "${QWEN2511_DIR}/text_encoder"
-
-    ######## TOKENIZER ########
-    provisioning_download \
-        "https://huggingface.co/Qwen/Qwen-Image-Edit-2511/resolve/main/tokenizer/tokenizer.json" \
-        "${QWEN2511_DIR}/tokenizer"
-
-    provisioning_download \
-        "https://huggingface.co/Qwen/Qwen-Image-Edit-2511/resolve/main/tokenizer/tokenizer_config.json" \
-        "${QWEN2511_DIR}/tokenizer"
-
-    provisioning_download \
-        "https://huggingface.co/Qwen/Qwen-Image-Edit-2511/resolve/main/tokenizer/vocab.json" \
-        "${QWEN2511_DIR}/tokenizer"
-
-    provisioning_download \
-        "https://huggingface.co/Qwen/Qwen-Image-Edit-2511/resolve/main/tokenizer/merges.txt" \
-        "${QWEN2511_DIR}/tokenizer"
-
-    ######## SCHEDULER ########
-    provisioning_download \
-        "https://huggingface.co/Qwen/Qwen-Image-Edit-2511/resolve/main/scheduler/scheduler_config.json" \
-        "${QWEN2511_DIR}/scheduler"
-
-    ######## FEATURE EXTRACTOR ########
-    provisioning_download \
-        "https://huggingface.co/Qwen/Qwen-Image-Edit-2511/resolve/main/feature_extractor/preprocessor_config.json" \
-        "${QWEN2511_DIR}/feature_extractor"
-
-    echo "Qwen-Image-Edit-2511 provisioning complete."
-}
-
 ### DO NOT EDIT BELOW HERE UNLESS YOU KNOW WHAT YOU ARE DOING ###
 
 function provisioning_start() {
@@ -119,15 +42,55 @@ function provisioning_start() {
     provisioning_get_nodes
     provisioning_get_pip_packages
 
-    provisioning_get_files "${COMFYUI_DIR}/models/checkpoints" "${CHECKPOINT_MODELS[@]}"
-    provisioning_get_files "${COMFYUI_DIR}/models/unet" "${UNET_MODELS[@]}"
-    provisioning_get_files "${COMFYUI_DIR}/models/lora" "${LORA_MODELS[@]}"
-    provisioning_get_files "${COMFYUI_DIR}/models/controlnet" "${CONTROLNET_MODELS[@]}"
-    provisioning_get_files "${COMFYUI_DIR}/models/vae" "${VAE_MODELS[@]}"
-    provisioning_get_files "${COMFYUI_DIR}/models/esrgan" "${ESRGAN_MODELS[@]}"
+    provisioning_get_files \
+        "${COMFYUI_DIR}/models/checkpoints" \
+        "${CHECKPOINT_MODELS[@]}"
+    provisioning_get_files \
+        "${COMFYUI_DIR}/models/unet" \
+        "${UNET_MODELS[@]}"
+    provisioning_get_files \
+        "${COMFYUI_DIR}/models/lora" \
+        "${LORA_MODELS[@]}"
+    provisioning_get_files \
+        "${COMFYUI_DIR}/models/controlnet" \
+        "${CONTROLNET_MODELS[@]}"
+    provisioning_get_files \
+        "${COMFYUI_DIR}/models/vae" \
+        "${VAE_MODELS[@]}"
+    provisioning_get_files \
+        "${COMFYUI_DIR}/models/esrgan" \
+        "${ESRGAN_MODELS[@]}"
 
-    # Qwen Image Edit 2511
-    provisioning_qwen_image_edit_2511
+    ##############################################################
+    ### QWEN IMAGE EDIT 2511 — FULL DIFFUSERS MODEL INSTALLATION
+    ##############################################################
+
+    echo "Installing Qwen-Image-Edit-2511..."
+
+    QWEN_DIR="${COMFYUI_DIR}/models/qwen_image_edit_2511"
+    mkdir -p "$QWEN_DIR"/{unet,vae,text_encoder,tokenizer,scheduler,feature_extractor}
+
+    provisioning_download "https://huggingface.co/Qwen/Qwen-Image-Edit-2511/resolve/main/model_index.json" "$QWEN_DIR"
+
+    provisioning_download "https://huggingface.co/Qwen/Qwen-Image-Edit-2511/resolve/main/unet/config.json" "$QWEN_DIR/unet"
+    provisioning_download "https://huggingface.co/Qwen/Qwen-Image-Edit-2511/resolve/main/unet/diffusion_pytorch_model.safetensors" "$QWEN_DIR/unet"
+
+    provisioning_download "https://huggingface.co/Qwen/Qwen-Image-Edit-2511/resolve/main/vae/config.json" "$QWEN_DIR/vae"
+    provisioning_download "https://huggingface.co/Qwen/Qwen-Image-Edit-2511/resolve/main/vae/diffusion_pytorch_model.safetensors" "$QWEN_DIR/vae"
+
+    provisioning_download "https://huggingface.co/Qwen/Qwen-Image-Edit-2511/resolve/main/text_encoder/config.json" "$QWEN_DIR/text_encoder"
+    provisioning_download "https://huggingface.co/Qwen/Qwen-Image-Edit-2511/resolve/main/text_encoder/model.safetensors" "$QWEN_DIR/text_encoder"
+
+    provisioning_download "https://huggingface.co/Qwen/Qwen-Image-Edit-2511/resolve/main/tokenizer/tokenizer.json" "$QWEN_DIR/tokenizer"
+    provisioning_download "https://huggingface.co/Qwen/Qwen-Image-Edit-2511/resolve/main/tokenizer/tokenizer_config.json" "$QWEN_DIR/tokenizer"
+    provisioning_download "https://huggingface.co/Qwen/Qwen-Image-Edit-2511/resolve/main/tokenizer/vocab.json" "$QWEN_DIR/tokenizer"
+    provisioning_download "https://huggingface.co/Qwen/Qwen-Image-Edit-2511/resolve/main/tokenizer/merges.txt" "$QWEN_DIR/tokenizer"
+
+    provisioning_download "https://huggingface.co/Qwen/Qwen-Image-Edit-2511/resolve/main/scheduler/scheduler_config.json" "$QWEN_DIR/scheduler"
+
+    provisioning_download "https://huggingface.co/Qwen/Qwen-Image-Edit-2511/resolve/main/feature_extractor/preprocessor_config.json" "$QWEN_DIR/feature_extractor"
+
+    echo "Qwen-Image-Edit-2511 installed."
 
     provisioning_print_end
 }
@@ -223,7 +186,8 @@ function provisioning_has_valid_civitai_token() {
 function provisioning_download() {
     if [[ -n $HF_TOKEN && $1 =~ ^https://([a-zA-Z0-9_-]+\.)?huggingface\.co(/|$|\?) ]]; then
         auth_token="$HF_TOKEN"
-    elif [[ -n $CIVITAI_TOKEN && $1 =~ ^https://([a-zA-Z0-9_-]+\.)?civitai\.com(/|$|\?) ]]; then
+    elif 
+        [[ -n $CIVITAI_TOKEN && $1 =~ ^https://([a-zA-Z0-9_-]+\.)?civitai\.com(/|$|\?) ]]; then
         auth_token="$CIVITAI_TOKEN"
     fi
     if [[ -n $auth_token ]];then
